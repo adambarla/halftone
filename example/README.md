@@ -1,6 +1,6 @@
 # Runnning the example
 
-First install python and requirements as described in [Installation section in the main README file](../README.md#Installation) .
+First, install python and requirements as described in the [Installation section in the main README file](../README.md#Installation) .
 
 Then run the following commands:
 ```bash
