@@ -18,23 +18,40 @@ def get_paper_sizes(n=5):
     return hs, ws
 
 
-def load_image(path):
+def load_image(path, use_black=False, gray_tolerance=25):
     """
     path: path to the image
 
     returns: numpy array of shape (h, w, 4)
     """
     pil_img = Image.open(path)
-    img = np.array(pil_img.convert("RGBA"))
-    k = 255 - np.sum(img[:, :, :3], axis=2) // 3
-    img = np.array(pil_img.convert("CMYK"))
-    img[:, :, 3] = k
-    return img
+    image = np.array(pil_img.convert("CMYK"))
+    if use_black:
+        mask = np.abs(image[:, :, 0] - image[:, :, 1]) <= gray_tolerance
+        mask &= np.abs(image[:, :, 1] - image[:, :, 2]) <= gray_tolerance
+        mask &= np.abs(image[:, :, 2] - image[:, :, 0]) <= gray_tolerance
+        new_layer = np.zeros((image.shape[0], image.shape[1]), dtype=image.dtype)
+        new_layer[mask] = image[mask].mean(axis=1)
+        image[:, :, 3] = new_layer
+    return image
 
 
-def fit_image(image, paper_h, paper_w):
+def fit_image(image, paper_h, paper_w, how="fit"):
+    """
+    image: numpy array of shape (h, w, 4)
+    paper_h: height of the paper in meters
+    paper_w: width of the paper in meters
+    how: how to fit the image (default: "fit"), options: "fit", "fit-width", "fit-height"
+    """
     image_h_px, image_w_px, _ = image.shape
-    scale = max(image_w_px / paper_w, image_h_px / paper_h)
+    if how == "fit":
+        scale = max(image_w_px / paper_w, image_h_px / paper_h)
+    elif how == "fit-width":
+        scale = image_w_px / paper_w
+    elif how == "fit-height":
+        scale = image_h_px / paper_h
+    else:
+        raise ValueError("Invalid value for 'how'")
     image_h = image_h_px / scale
     image_w = image_w_px / scale
     return image_h, image_w
