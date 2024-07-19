@@ -20,6 +20,25 @@ def generate_halftone(
     use_black=False,
     fit_how="fit",
 ):
+    """
+    Function to generate a halftone svg from a given image.
+    The image is split into 4 layers (C, M, Y, K).
+    Each layer consists of points on a grid.
+    The size of the points is proportional to the average color intensity of the area covered by the circle.
+    Grids are rotated to a given angle to mitigate the moiré effect.
+
+    image_path: path to the image
+    save_path: path to save the svg
+    paper_w: width of the paper in meters
+    paper_h: height of the paper in meters
+    max_dot_size: maximum size of the dots in meters
+    colors: list of hex color codes for each layer (default: ["#00ffff", "#ff00ff", "#ffff00", "#000000"])
+    angles: list of angles in degrees for each layer (default: [15, 75, 0, 45])
+    lws: list of line widths in millimeters for each layer, adjust for pen thickness (default: [1, 1, 1, 1])
+    pad: padding in meters (default: 0)
+    use_black: whether to plot the black layer or not (default: False)
+    fit_how: how to fit the image to the paper (default: "fit"), options: "fit", "fit-width", "fit-height"
+    """
     # Default values
     if colors is None:
         colors = ["#00ffff", "#ff00ff", "#ffff00", "#000000"]

@@ -8,6 +8,11 @@ import matplotlib as mpl
 
 
 def get_paper_sizes(n=5):
+    """
+    n: maximum size of paper (default: 5)
+
+    returns: lists of heights and widths of A-series paper sizes (in meters), index in list corresponds to size (A0, A1, A2, ...)
+    """
     a = math.sqrt(2)
     b = 1
     hs = [1 / 2 ** (1 / 4)]
@@ -21,6 +26,8 @@ def get_paper_sizes(n=5):
 def load_image(path, use_black=False, gray_tolerance=25):
     """
     path: path to the image
+    use_black: use black layer from the image (default: False)
+    gray_tolerance: tolerance for gray color (default: 25)
 
     returns: numpy array of shape (h, w, 4)
     """
@@ -60,6 +67,12 @@ def fit_image(image, paper_h, paper_w, how="fit"):
 def convolve(image, image_h, max_dot_size):
     """
     Calculates the average color intensity of the area covered by a halftone dot.
+
+    image: numpy array of shape (h, w, 4)
+    image_h: height of the image in meters
+    max_dot_size: maximum size of the dots in meters
+
+    returns: list of 4 numpy arrays of shape (h, w)
     """
     image_h_px, image_w_px, _ = image.shape
     layers = []
@@ -81,6 +94,9 @@ def get_coord(point, paper_h, paper_w, image_h, image_w):
 
 
 def is_valid(point, paper_h, paper_w, image_h, image_w, pad):
+    """
+    Checks if a point is within the bounds of the paper and padding.
+    """
     x, y = get_coord(point, paper_h, paper_w, image_h, image_w)
     if x < 0 or x > image_h or y < 0 or y > image_w:
         return False
@@ -94,6 +110,21 @@ def is_valid(point, paper_h, paper_w, image_h, image_w, pad):
 def get_dot_radius(
     point, convolved_image, paper_w, paper_h, image_h, image_w, max_dot_size, lw, tone
 ):
+    """
+    Calculates the radius of a halftone dot based on the average color intensity of the area covered by the circle.
+
+    point: coordinates of the point
+    convolved_image: numpy array of shape (h, w), value of each pixel should be the average color intensity of the area covered by the circle
+    paper_w: width of the paper in meters
+    paper_h: height of the paper in meters
+    image_h: height of the image in meters
+    image_w: width of the image in meters
+    max_dot_size: maximum size of the dots in meters
+    lw: line width in meters
+    tone: tone of the layer, used to adjust the intensity of the color
+
+    returns: radius of the dot in meters
+    """
     image_h_px, image_w_px = convolved_image.shape
     x, y = get_coord(point, paper_h, paper_w, image_h, image_w)
     x = image_h_px - int(x / image_h * image_h_px) - 1
@@ -107,6 +138,16 @@ def get_dot_radius(
 
 
 def plot_dot(point, lw, radius):
+    """
+    Plots a halftone dot. The dot is drawn as a circle with a series of vertical lines to fill the circle.
+    This is done because the plotter software does not support filled circles.
+
+    point: coordinates of the point
+    lw: line width in millimeters
+    radius: radius of the dot in meters
+
+    returns: list of patches to be added to the plot
+    """
     lw_pt = lw / 2.83465 / 1000  # mm to pt
     x, y = point
     if radius == 0:
@@ -128,6 +169,9 @@ def plot_dot(point, lw, radius):
 
 
 def generate_grid(angle, max_dot_size, paper_h, paper_w, image_h, image_w, pad=0):
+    """
+    Generates a list of point coordinates on a grid rotated to a given angle.
+    """
     size = math.sqrt(paper_h**2 + paper_w**2)
     gamma = angle / 180 * math.pi  # to radians
     points = []
@@ -156,6 +200,22 @@ def plot_dots(
     tone,
     lw,
 ):
+    """
+    Plots halftone dots on a grid.
+
+    ax: matplotlib axis
+    convolved_image: numpy array of shape (h, w), value of each pixel should be the average color intensity of the area covered by the circle
+    points: list of point coordinates
+    paper_w: width of the paper in meters
+    paper_h: height of the paper in meters
+    image_h: height of the image in meters
+    image_w: width of the image in meters
+    max_dot_size: maximum size of the dots in meters
+    color: color of the dots (hex code)
+    alpha: transparency of the dots
+    tone: tone of the layer, used to adjust the intensity of the color
+    lw: line width in meters
+    """
     patches = list(
         chain.from_iterable(
             plot_dot(
