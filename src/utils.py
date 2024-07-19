@@ -40,6 +40,8 @@ def load_image(path, use_black=False, gray_tolerance=25):
         new_layer = np.zeros((image.shape[0], image.shape[1]), dtype=image.dtype)
         new_layer[mask] = image[mask].mean(axis=1)
         image[:, :, 3] = new_layer
+        for i in range(3):
+            image[mask, i] = 0
     return image
 
 
