@@ -7,7 +7,7 @@ The tool was created to generate halftone images that can be printed with a pen 
 |-------------------------------------------|-----------------------------------------------|---------------------------------------------------|
 
 
-# Instalation
+# Installation
 
 ### Python 
 
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 # Usage
 
-Function `generate_halftone` from `src/halftone.py` splits the given image is split into 4 layers (C, M, Y, K).
+Function `generate_halftone` from `src/halftone.py` splits the given image is split into four layers (C, M, Y, K).
 Each layer consists of points on a grid.
 The size of the points is proportional to the average color intensity of the area covered by the circle.
 Grids are rotated to a given angle to mitigate the [Moiré pattern](https://en.wikipedia.org/wiki/Moir%C3%A9_pattern).
@@ -41,19 +41,20 @@ Grids are rotated to a given angle to mitigate the [Moiré pattern](https://en.w
 
 The function has the following parameters:
 
-| Parameter | Description                                                                         | Default                                        |
-|-----------|-------------------------------------------------------------------------------------|------------------------------------------------|
-| `image_path` | path to the image                                                                   |                                                |
-| `save_path` | path to save the svg                                                                |                                                |
-| `paper_w` | width of the paper in meters                                                        |                                                |
-| `paper_h` | height of the paper in meters                                                       |                                                |
+| Parameter      | Description                                                                         | Default                                        |
+|----------------|-------------------------------------------------------------------------------------|------------------------------------------------|
+| `image_path`   | path to the image                                                                   |                                                |
+| `save_path`    | path to save the svg                                                                |                                                |
+| `paper_w`      | width of the paper in meters                                                        |                                                |
+| `paper_h`      | height of the paper in meters                                                       |                                                |
 | `max_dot_size` | maximum size of the dots in meters                                                  |                                                |
-| `colors` | list of hex color codes for each layer                                              | `["#00ffff", "#ff00ff", "#ffff00", "#000000"]` |
-| `angles` | list of angles in degrees for each layer                                            | `[15, 75, 0, 45]`                              |
-| `lws` | list of line widths in millimeters for each layer                                   | `[1, 1, 1, 1]`                                 |
-| `pad` | padding in meters                                                                   | `0`                                            |
-| `use_black` | whether to plot the black layer or not                                              | `False`                                        |
-| `fit_how` | how to fit the image to the paper (options: `"fit"`, `"fit-width"`, `"fit-height"`) | `"fit"`                                        |
+| `colors`       | list of hex color codes for each layer                                              | `["#00ffff", "#ff00ff", "#ffff00", "#000000"]` |
+| `angles`       | list of angles in degrees for each layer                                            | `[15, 75, 0, 45]`                              |
+| `lws`          | list of line widths in millimeters for each layer                                   | `[1, 1, 1, 1]`                                 |
+| `pad`          | padding in meters                                                                   | `0`                                            |
+| `use_black`    | whether to plot the black layer or not                                              | `False`                                        |
+| `fit_how`      | how to fit the image to the paper (options: `"fit"`, `"fit-width"`, `"fit-height"`) | `"fit"`                                        |
+
 ### Command line
 
 After installing and activating the environment,
@@ -81,4 +82,4 @@ You can contribute to this project by creating a pull request or submitting an i
 
 # License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License (see the [LICENSE](LICENSE) file for details).
