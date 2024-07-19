@@ -1,5 +1,5 @@
 # Halftone generator
-This tool generates [halftone](https://en.wikipedia.org/wiki/Halftone) from a given image. 
+This tool generates [halftone](https://en.wikipedia.org/wiki/Halftone) from a given image ([amazing video about halftone](https://youtu.be/VckU9UXI_XE?si=nIdPdpMmwybd5goc)). 
 The output is in a from of an `svg` file.
 The tool was created to generate halftone images that can be printed with a pen plotter. This guided the choice of the parameters and the output format.
 
