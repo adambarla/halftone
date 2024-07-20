@@ -48,12 +48,9 @@ def generate_halftone(
         alphas = [1, 1, 1, 1]
     if lws is None:
         lws = [1, 1, 1, 1]
-    # Conversions
-    cm = 100 / 2.54
     alphas = np.array(alphas, dtype=float)
     tones = (1 / alphas) / (1 / alphas).max() / 2
-    lws = np.array(lws, dtype=float)
-    lws *= (1 / 25.4) * 72  # mm to pt (1mm = 1/25.4 inch, 1 inch = 72 pt)
+    lws = np.array(lws) / 1000  # convert to meters
     # Load image
     image = load_image(image_path, use_black)
     image_h, image_w = fit_image(image, paper_h, paper_w, fit_how)
@@ -61,7 +58,10 @@ def generate_halftone(
     # Plot
     mpl.rcParams["savefig.pad_inches"] = 0
     fig = plt.figure(
-        figsize=(paper_w * cm, paper_h * cm), dpi=100, layout="tight", facecolor="none"
+        figsize=(m_to_in(paper_w), m_to_in(paper_h)),
+        dpi=100,
+        layout="tight",
+        facecolor="none",
     )
     plt.autoscale(tight=True)
     plt.axis("off")

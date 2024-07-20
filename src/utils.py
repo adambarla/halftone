@@ -6,6 +6,19 @@ from itertools import chain
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
+def m_to_in(m):
+    return m / 0.0254
+
+
+def pt_to_m(pt):
+    # mm to pt (1mm = 1/25.4 inch, 1 inch = 72 pt)
+    return pt * 25.4 / 72 / 1000
+
+
+def m_to_pt(m):
+    # mm to pt (1mm = 1/25.4 inch, 1 inch = 72 pt)
+    return m * (1 / pt_to_m(1))
+
 
 def get_paper_sizes(n=5):
     """
@@ -134,7 +147,7 @@ def get_dot_radius(
     r = math.sqrt(
         convolved_image[x, y] / 255 * max_dot_size**2
     )  # Area scales quadratically with radius
-    if r * tone < lw / 2.83465 / 1000 / 2:  # min radius is half the line width
+    if r * tone < lw / 2:  # min radius is half the line width
         return 0
     return r * tone
 
@@ -150,21 +163,20 @@ def plot_dot(point, lw, radius):
 
     returns: list of patches to be added to the plot
     """
-    lw_pt = lw / 2.83465 / 1000  # mm to pt
     x, y = point
     if radius == 0:
         return []
-    l = radius - lw_pt / 2
+    l = radius - lw / 2
     patches = [
         plt.Line2D(
-            [x - l + a * lw_pt, x - l + a * lw_pt],
+            [x - l + a * lw, x - l + a * lw],
             [
-                y - math.sqrt(l**2 - (l - a * lw_pt) ** 2),
-                y + math.sqrt(l**2 - (l - a * lw_pt) ** 2),
+                y - math.sqrt(l**2 - (l - a * lw) ** 2),
+                y + math.sqrt(l**2 - (l - a * lw) ** 2),
             ],
         )
-        for a in range(0, int(math.ceil(2 * l / lw_pt)))
-        if math.sqrt(l**2 - (l - a * lw_pt) ** 2) > lw_pt / 2
+        for a in range(0, int(math.ceil(2 * l / lw)))
+        if math.sqrt(l**2 - (l - a * lw) ** 2) > lw / 2
     ]
     patches.append(plt.Circle(point, radius=radius))
     return patches
@@ -239,6 +251,6 @@ def plot_dots(
         )
     )
     coll = mpl.collections.PatchCollection(
-        patches, edgecolor=color, facecolor="none", linewidths=lw, alpha=alpha
+        patches, edgecolor=color, facecolor="none", linewidths=m_to_pt(lw), alpha=alpha
     )
     ax.add_collection(coll)
