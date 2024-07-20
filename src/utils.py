@@ -34,9 +34,9 @@ def load_image(path, use_black=False, gray_tolerance=25):
     pil_img = Image.open(path)
     image = np.array(pil_img.convert("CMYK"))
     if use_black:
-        mask = np.abs(image[:, :, 0] - image[:, :, 1]) <= gray_tolerance
-        mask &= np.abs(image[:, :, 1] - image[:, :, 2]) <= gray_tolerance
-        mask &= np.abs(image[:, :, 2] - image[:, :, 0]) <= gray_tolerance
+        mask = np.ones((image.shape[0], image.shape[1]), dtype=bool)
+        for i in range(3):
+            mask &= np.abs(image[:, :, i] - image[:, :, (i + 1) % 3]) <= gray_tolerance
         new_layer = np.zeros((image.shape[0], image.shape[1]), dtype=image.dtype)
         new_layer[mask] = image[mask].mean(axis=1)
         image[:, :, 3] = new_layer
