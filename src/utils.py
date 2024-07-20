@@ -6,6 +6,7 @@ from itertools import chain
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
+
 def m_to_in(m):
     return m / 0.0254
 
@@ -24,13 +25,12 @@ def get_paper_sizes(n=5):
     """
     n: maximum size of paper (default: 5)
 
-    returns: lists of heights and widths of A-series paper sizes (in meters), index in list corresponds to size (A0, A1, A2, ...)
+    returns: heights and widths of A-series paper sizes (in meters).
+    The index in the list corresponds to size(A4 at index 4)
     """
-    a = math.sqrt(2)
-    b = 1
     hs = [1 / 2 ** (1 / 4)]
     ws = [2 ** (1 / 4)]
-    for i in range(1, n):
+    for i in range(1, n + 1):
         hs.append(ws[i - 1] / 2)
         ws.append(hs[i - 1])
     return hs, ws
@@ -87,7 +87,7 @@ def convolve(image, image_h, max_dot_size):
     image_h: height of the image in meters
     max_dot_size: maximum size of the dots in meters
 
-    returns: list of 4 numpy arrays of shape (h, w)
+    returns: 4 numpy arrays of shape (h, w)
     """
     image_h_px, image_w_px, _ = image.shape
     layers = []
@@ -123,7 +123,7 @@ def is_valid(point, paper_h, paper_w, image_h, image_w, pad):
 
 
 def get_dot_radius(
-    point, convolved_image, paper_w, paper_h, image_h, image_w, max_dot_size, lw, tone
+        point, convolved_image, paper_w, paper_h, image_h, image_w, max_dot_size, lw, tone
 ):
     """
     Calculates the radius of a halftone dot based on the average color intensity of the area covered by the circle.
@@ -145,48 +145,90 @@ def get_dot_radius(
     x = image_h_px - int(x / image_h * image_h_px) - 1
     y = int(y / image_w * image_w_px)
     r = math.sqrt(
-        convolved_image[x, y] / 255 * max_dot_size**2
+        convolved_image[x, y] / 255 * max_dot_size ** 2
     )  # Area scales quadratically with radius
     if r * tone < lw / 2:  # min radius is half the line width
         return 0
     return r * tone
 
 
-def plot_dot(point, lw, radius):
+def plot_dot_with_lines(point, lw, radius):
     """
     Plots a halftone dot. The dot is drawn as a circle with a series of vertical lines to fill the circle.
     This is done because the plotter software does not support filled circles.
 
     point: coordinates of the point
-    lw: line width in millimeters
+    lw: line width in meters
     radius: radius of the dot in meters
 
     returns: list of patches to be added to the plot
     """
-    x, y = point
     if radius == 0:
         return []
+    x, y = point
     l = radius - lw / 2
     patches = [
         plt.Line2D(
             [x - l + a * lw, x - l + a * lw],
             [
-                y - math.sqrt(l**2 - (l - a * lw) ** 2),
-                y + math.sqrt(l**2 - (l - a * lw) ** 2),
+                y - math.sqrt(l ** 2 - (l - a * lw) ** 2),
+                y + math.sqrt(l ** 2 - (l - a * lw) ** 2),
             ],
         )
         for a in range(0, int(math.ceil(2 * l / lw)))
-        if math.sqrt(l**2 - (l - a * lw) ** 2) > lw / 2
+        if math.sqrt(l ** 2 - (l - a * lw) ** 2) > lw / 2
     ]
     patches.append(plt.Circle(point, radius=radius))
     return patches
+
+
+def plot_dot_with_circles(point, lw, radius):
+    """
+    Plots a halftone dot. The dot is drawn as a series of concentric circles to fill the circle.
+    This is done because the plotter software does not support filled circles.
+
+    point: coordinates of the point
+    lw: line width in meters
+    radius: radius of the dot in meters
+
+    returns: list of patches to be added to the plot
+    """
+    if radius == 0:
+        return []
+    patches = []
+    r = radius
+    while r > 0:
+        patches.append(plt.Circle(point, radius=r))
+        r -= lw
+    return patches
+
+
+def plot_dot(point, lw, radius, how):
+    """
+    Plots a halftone dot.
+    Dot is drawn as a circle filled with lines or circles based on the value of 'how'.
+    This is done because the plotter software does not support filled circles.
+
+    point: coordinates of the point
+    lw: line width in meters
+    radius: radius of the dot in meters
+    how: how to plot the dot, options: "lines", "circles"
+
+    returns: list of patches to be added to the plot
+    """
+    if how == "lines":
+        return plot_dot_with_lines(point, lw, radius)
+    elif how == "circles":
+        return plot_dot_with_circles(point, lw, radius)
+    else:
+        raise ValueError("Invalid value for 'how'")
 
 
 def generate_grid(angle, max_dot_size, paper_h, paper_w, image_h, image_w, pad=0):
     """
     Generates a list of point coordinates on a grid rotated to a given angle.
     """
-    size = math.sqrt(paper_h**2 + paper_w**2)
+    size = math.sqrt(paper_h ** 2 + paper_w ** 2)
     gamma = angle / 180 * math.pi  # to radians
     points = []
     for a in np.linspace(0, size, int(size // max_dot_size) + 1):

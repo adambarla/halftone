@@ -2,7 +2,6 @@ import os
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
 from src.utils import *
 
 
@@ -19,10 +18,11 @@ def generate_halftone(
     pad=0,
     use_black=False,
     fit_how="fit",
+    dot_fill_how="circles"
 ):
     """
     Function to generate a halftone svg from a given image.
-    The image is split into 4 layers (C, M, Y, K).
+    The image is split into four layers (C, M, Y, K).
     Each layer consists of points on a grid.
     The size of the points is proportional to the average color intensity of the area covered by the circle.
     Grids are rotated to a given angle to mitigate the moiré effect.
@@ -34,10 +34,12 @@ def generate_halftone(
     max_dot_size: maximum size of the dots in meters
     colors: list of hex color codes for each layer (default: ["#00ffff", "#ff00ff", "#ffff00", "#000000"])
     angles: list of angles in degrees for each layer (default: [15, 75, 0, 45])
+    alphas: list of transparencies for each layer (default: [1, 1, 1, 1])
     lws: list of line widths in millimeters for each layer, adjust for pen thickness (default: [1, 1, 1, 1])
     pad: padding in meters (default: 0)
     use_black: whether to plot the black layer or not (default: False)
     fit_how: how to fit the image to the paper (default: "fit"), options: "fit", "fit-width", "fit-height"
+    dot_fill_how: how to plot the dot, options: "lines", "circles" (default: "circles")
     """
     # Default values
     if colors is None:

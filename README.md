@@ -41,19 +41,23 @@ Grids are rotated to a given angle to mitigate the [Moiré pattern](https://en.w
 
 The function has the following parameters:
 
-| Parameter      | Description                                                                         | Default                                        |
-|----------------|-------------------------------------------------------------------------------------|------------------------------------------------|
-| `image_path`   | path to the image                                                                   |                                                |
-| `save_path`    | path to save the svg                                                                |                                                |
-| `paper_w`      | width of the paper in meters                                                        |                                                |
-| `paper_h`      | height of the paper in meters                                                       |                                                |
-| `max_dot_size` | maximum size of the dots in meters                                                  |                                                |
-| `colors`       | list of hex color codes for each layer                                              | `["#00ffff", "#ff00ff", "#ffff00", "#000000"]` |
-| `angles`       | list of angles in degrees for each layer                                            | `[15, 75, 0, 45]`                              |
-| `lws`          | list of line widths in millimeters for each layer                                   | `[1, 1, 1, 1]`                                 |
-| `pad`          | padding in meters                                                                   | `0`                                            |
-| `use_black`    | whether to plot the black layer or not                                              | `False`                                        |
-| `fit_how`      | how to fit the image to the paper (options: `"fit"`, `"fit-width"`, `"fit-height"`) | `"fit"`                                        |
+| Parameter      | Description                                                                                                                        | Default                                        |
+|----------------|------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| `image_path`   | path to the image                                                                                                                  |                                                |
+| `save_path`    | path to save the svg                                                                                                               |                                                |
+| `paper_w`      | width of the paper in meters                                                                                                       |                                                |
+| `paper_h`      | height of the paper in meters                                                                                                      |                                                |
+| `max_dot_size` | maximum size of the dots in meters                                                                                                 |                                                |
+| `colors`       | list of hex color codes for each layer                                                                                             | `["#00ffff", "#ff00ff", "#ffff00", "#000000"]` |
+| `angles`       | list of angles in degrees for each layer                                                                                           | `[15, 75, 0, 45]`                              |
+| `alphas`       | list of opacities for each layer                                                                                                   | `[1, 1, 1, 1]`                                 |
+| `lws`          | list of line widths in millimeters for each layer                                                                                  | `[1, 1, 1, 1]`                                 |
+| `pad`          | padding in meters                                                                                                                  | `0`                                            |
+| `use_black`    | whether to plot the black layer or not                                                                                             | `False`                                        |
+| `fit_how`      | how to fit the image to the paper (options: `"fit"`, `"fit-width"`, `"fit-height"`)                                                | `"fit"`                                        |
+| `dot_fill_how` | how to fill the dot. This is done because the plotter software does not support filled circles.  (options: `"circles"`, `"lines"`) | `"circles"`                                    |
+
+
 
 ### Command line
 
